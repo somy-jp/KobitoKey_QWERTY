@@ -87,7 +87,7 @@
 
 &tb_right_listener {
     status = "okay";
-    device = <&tb_right>;
+    device = <&tb_right_split>;
 
     input-processors =
         <&sensor_rotation_right>,
