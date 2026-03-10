@@ -46,13 +46,13 @@
             key-positions = <5 15>;
         };
 
-        combo_lt4_L {
-            bindings = <&lt 4 LEFT_GUI>;
+        combo_shift_L {
+            bindings = <&kp LEFT_SHIFT>;
             key-positions = <33 34>;
         };
 
-        combo_lt4_R {
-            bindings = <&lt 4 LEFT_GUI>;
+        combo_shift_R {
+            bindings = <&kp RIGHT_SHIFT>;
             key-positions = <35 36>;
         };
 
@@ -67,20 +67,20 @@
 
         default_layer {
             bindings = <
-&kp Q            &kp W             &kp E             &kp R               &kp T      &lt 5 Y          &kp U                &kp I              &kp O              &kp P
-&kp A            &kp S             &mt LEFT_SHIFT D  &mt LEFT_CONTROL F  &kp G      &kp H            &mt RIGHT_CONTROL J  &mt RIGHT_SHIFT K  &kp L              &kp MINUS
-&kp Z            &kp X             &kp C             &kp V               &kp B      &kp N            &kp M                &kp COMMA          &kp PERIOD         &kp SLASH
-&mt LSHFT LANG2  &kp LEFT_CONTROL  &kp LEFT_ALT      &lt 1 SPACE         &lt 2 TAB  &lt 2 BACKSPACE  &lt 1 ENTER          &kp RIGHT_ALT      &kp RIGHT_CONTROL  &mt RIGHT_SHIFT LANG1
+&kp Q        &kp W         &kp E             &kp R               &kp T      &lt 5 Y          &kp U                &kp I              &kp O          &kp P
+&kp A        &kp S         &mt LEFT_SHIFT D  &mt LEFT_CONTROL F  &kp G      &kp H            &mt RIGHT_CONTROL J  &mt RIGHT_SHIFT K  &kp L          &kp MINUS
+&kp Z        &kp X         &kp C             &kp V               &kp B      &kp N            &kp M                &kp COMMA          &kp PERIOD     &kp SLASH
+&lt 4 LANG2  &kp LEFT_GUI  &kp LEFT_ALT      &lt 1 SPACE         &lt 2 TAB  &lt 2 BACKSPACE  &lt 1 ENTER          &kp RIGHT_ALT      &kp RIGHT_GUI  &lt 4 LANG1
             >;
         };
 
         SYMBOL_ARROW {
             label = "SYMBOL_ARROW";
             bindings = <
-&kp CARET    &kp TILDE     &kp PERCENT           &kp AMPERSAND           &kp DOUBLE_QUOTES  &kp LS(LA(LEFT))  &kp LC(LEFT)      &kp UP    &kp RC(RIGHT)  &kp RS(RA(RIGHT))
-&kp AT_SIGN  &kp DOLLAR    &mt LEFT_SHIFT MINUS  &mt LEFT_CONTROL EQUAL  &kp SINGLE_QUOTE   &kp HOME          &kp LEFT          &kp DOWN  &kp RIGHT      &kp END
-&kp HASH     &kp ASTERISK  &kp PIPE              &kp EXCLAMATION         &kp GRAVE          &kp COLON         &kp SEMICOLON     &trans    &trans         &kp BACKSLASH
-&trans       &trans        &trans                &kp RC(LEFT_GUI)        &trans             &kp DELETE        &kp RC(LEFT_GUI)  &trans    &trans         &trans
+&kp CARET    &kp TILDE     &kp PERCENT           &kp AMPERSAND           &kp DOUBLE_QUOTES  &kp LS(LC(LG(LEFT)))  &kp LA(LEFT)      &kp UP    &kp RA(RIGHT)  &kp RS(RC(RG(RIGHT)))
+&kp AT_SIGN  &kp DOLLAR    &mt LEFT_SHIFT MINUS  &mt LEFT_CONTROL EQUAL  &kp SINGLE_QUOTE   &kp HOME              &kp LEFT          &kp DOWN  &kp RIGHT      &kp END
+&kp HASH     &kp ASTERISK  &kp PIPE              &kp EXCLAMATION         &kp GRAVE          &kp COLON             &kp SEMICOLON     &trans    &trans         &kp BACKSLASH
+&trans       &trans        &trans                &kp RC(LEFT_GUI)        &trans             &kp DELETE            &kp RC(LEFT_GUI)  &trans    &trans         &trans
             >;
         };
 
