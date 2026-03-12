@@ -2,6 +2,7 @@
 #include <zephyr/dt-bindings/input/input-event-codes.h>
 #include <input/processors.dtsi>
 #include <input/processors/sensor_rotation.dtsi>
+#include <behaviors/input_gestures_accel.dtsi>
 
 &xiao_serial { status = "disabled"; };
 
@@ -37,14 +38,14 @@
         reg = <0>;
         spi-max-frequency = <2000000>;
         irq-gpios = <&gpio0 2 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
-        cpi = <550>; /* センサー感度 */
+        cpi = <600>; /* センサー感度 */
 
 
         evt-type = <INPUT_EV_REL>;
         x-input-code = <INPUT_REL_X>;
         y-input-code = <INPUT_REL_Y>;
 
-        force-awake; /* ZMKがACTIVE状態の間、センサーをスリープさせない */
+        /* force-awake削除: IDLE→ACTIVE遷移時のREST→RUN強制復帰ノイズによる意図しないスクロールを防止 */
     };
 };
 
@@ -62,6 +63,29 @@
         status = "okay";
         rotation-angle = <24>;
     };
+
+    pointer_accel_scroll: pointer_accel_scroll {
+        compatible = "zmk,input-processor-acceleration";
+        #input-processor-cells = <0>;
+        status = "okay";
+        input-type = <INPUT_EV_REL>;
+        track-remainders;
+        min-factor = <1000>;       /* 低速時 1.0倍（減速しない） */
+        max-factor = <1200>;       /* 高速時 1.2倍 */
+        speed-threshold = <1000>;
+        speed-max = <10000>;
+        acceleration-exponent = <1>; /* 線形 */
+    };
+};
+
+&pointer_accel {
+    input-type = <INPUT_EV_REL>;
+    track-remainders;
+    min-factor = <150>;       /* 低速時 0.5倍 */
+    max-factor = <3000>;       /* 高速時 3.0倍*/
+    speed-threshold = <1400>;   /* この速度以下でブースト開始 */
+    speed-max = <3000>;        /* この速度以上で max-factor に収束 */
+    acceleration-exponent = <2>; /* 二次曲線で滑らかに遷移 */
 };
 
 &tb_left_listener {
@@ -70,6 +94,7 @@
 
     input-processors =
             <&sensor_rotation_left>,
+            <&pointer_accel_scroll>,
             <&zip_x_scaler 1 20>,
             <&zip_y_scaler 1 20>,
             <&zip_xy_to_scroll_mapper>,
@@ -91,17 +116,19 @@
 
     input-processors =
         <&sensor_rotation_right>,
+        <&pointer_accel>,
         <&zip_temp_layer 3 5000>; /* オートマウスレイヤーの指定とトラボ操作及びマウスボタン押下後に滞留する時間 */
 
     scroller {
         layers = <5>;
-        input-processors = 
+        input-processors =
+            <&pointer_accel_scroll>,                              //スクロール用加速
             // <&zip_xy_transform INPUT_TRANSFORM_XY_SWAP>,        //X軸とY軸の入れ替え
             <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>,       //X軸反転
             <&zip_xy_to_scroll_mapper>,                         //スクロールモードに変更
             <&zip_scroll_transform INPUT_TRANSFORM_X_INVERT>,   //スクロールのX軸反転
             <&zip_scroll_transform INPUT_TRANSFORM_Y_INVERT>,   //スクロールのY軸反転
-            <&zip_scroll_scaler 1 12>;                           //スクロール量を1/10倍
+            <&zip_scroll_scaler 1 20>;                           //スクロール量を1/12倍
     };
 };
 &zip_temp_layer {
