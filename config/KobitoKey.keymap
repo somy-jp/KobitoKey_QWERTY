@@ -80,7 +80,7 @@
 &kp CARET    &kp TILDE     &kp PERCENT           &kp AMPERSAND           &kp DOUBLE_QUOTES  &kp LS(LC(LG(LEFT)))  &kp LA(LEFT)      &kp UP    &kp RA(RIGHT)  &kp RS(RC(RG(RIGHT)))
 &kp AT_SIGN  &kp DOLLAR    &mt LEFT_SHIFT MINUS  &mt LEFT_CONTROL EQUAL  &kp SINGLE_QUOTE   &kp HOME              &kp LEFT          &kp DOWN  &kp RIGHT      &kp END
 &kp HASH     &kp ASTERISK  &kp PIPE              &kp EXCLAMATION         &kp GRAVE          &kp COLON             &kp SEMICOLON     &trans    &trans         &kp BACKSLASH
-&trans       &trans        &trans                &kp RC(LEFT_GUI)        &trans             &kp DELETE            &kp RC(LEFT_GUI)  &trans    &trans         &trans
+&trans       &trans        &trans                &kp SPACE               &trans             &kp DELETE            &kp RC(LEFT_GUI)  &trans    &trans         &trans
             >;
         };
 
