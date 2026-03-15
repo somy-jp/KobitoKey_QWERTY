@@ -3,6 +3,7 @@
 #include <input/processors.dtsi>
 #include <input/processors/sensor_rotation.dtsi>
 #include <behaviors/input_gestures_accel.dtsi>
+#include <scroll-snap.dtsi>
 
 &xiao_serial { status = "disabled"; };
 
@@ -63,28 +64,15 @@
         status = "okay";
         rotation-angle = <24>;
     };
-
-    pointer_accel_scroll: pointer_accel_scroll {
-        compatible = "zmk,input-processor-acceleration";
-        #input-processor-cells = <0>;
-        status = "okay";
-        input-type = <INPUT_EV_REL>;
-        track-remainders;
-        min-factor = <1000>;       /* 低速時 1.0倍（減速しない） */
-        max-factor = <1200>;       /* 高速時 1.2倍 */
-        speed-threshold = <1000>;
-        speed-max = <10000>;
-        acceleration-exponent = <1>; /* 線形 */
-    };
 };
 
 &pointer_accel {
     input-type = <INPUT_EV_REL>;
     track-remainders;
-    min-factor = <150>;       /* 低速時 0.5倍 */
+    min-factor = <100>;       /* 低速時 0.5倍 */
     max-factor = <3000>;       /* 高速時 3.0倍*/
-    speed-threshold = <1400>;   /* この速度以下でブースト開始 */
-    speed-max = <3000>;        /* この速度以上で max-factor に収束 */
+    speed-threshold = <350>;    /* ニュートラル(1.0倍)をmovement_size 5（~417cps）付近に設定 */
+    speed-max = <5000>;         /* 最大加速(3.0倍)をmovement_size 60（~5000cps）に設定 */
     acceleration-exponent = <2>; /* 二次曲線で滑らかに遷移 */
 };
 
@@ -94,12 +82,10 @@
 
     input-processors =
             <&sensor_rotation_left>,
-            <&pointer_accel_scroll>,
-            <&zip_x_scaler 1 20>,
-            <&zip_y_scaler 1 20>,
             <&zip_xy_to_scroll_mapper>,
-            <&zip_scroll_transform INPUT_TRANSFORM_Y_INVERT>;
-            /* , <&zip_scroll_transform INPUT_TRANSFORM_X_INVERT>; */
+            <&zip_scroll_snap>,
+            <&zip_scroll_transform INPUT_TRANSFORM_Y_INVERT>,
+            <&zip_scroll_scaler 1 20>;
     };
 
 / {
@@ -122,11 +108,8 @@
     scroller {
         layers = <5>;
         input-processors =
-            <&pointer_accel_scroll>,                              //スクロール用加速
-            // <&zip_xy_transform INPUT_TRANSFORM_XY_SWAP>,        //X軸とY軸の入れ替え
-            <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>,       //X軸反転
             <&zip_xy_to_scroll_mapper>,                         //スクロールモードに変更
-            <&zip_scroll_transform INPUT_TRANSFORM_X_INVERT>,   //スクロールのX軸反転
+            <&zip_scroll_snap>,                                 //スクロール方向スナップ
             <&zip_scroll_transform INPUT_TRANSFORM_Y_INVERT>,   //スクロールのY軸反転
             <&zip_scroll_scaler 1 20>;                           //スクロール量を1/12倍
     };
