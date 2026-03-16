@@ -39,7 +39,7 @@
         reg = <0>;
         spi-max-frequency = <2000000>;
         irq-gpios = <&gpio0 2 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
-        cpi = <600>; /* センサー感度 */
+        cpi = <750>; /* センサー感度 */
 
 
         evt-type = <INPUT_EV_REL>;
@@ -69,10 +69,10 @@
 &pointer_accel {
     input-type = <INPUT_EV_REL>;
     track-remainders;
-    min-factor = <100>;       /* 低速時 0.5倍 */
-    max-factor = <3000>;       /* 高速時 3.0倍*/
-    speed-threshold = <350>;    /* ニュートラル(1.0倍)をmovement_size 5（~417cps）付近に設定 */
-    speed-max = <5000>;         /* 最大加速(3.0倍)をmovement_size 60（~5000cps）に設定 */
+    min-factor = <100>;
+    max-factor = <800>;
+    speed-threshold = <700>;
+    speed-max = <800>;
     acceleration-exponent = <2>; /* 二次曲線で滑らかに遷移 */
 };
 
@@ -108,10 +108,13 @@
     scroller {
         layers = <5>;
         input-processors =
+            <&sensor_rotation_right>,
+            <&zip_x_scaler 0 1>,
+            <&zip_y_scaler 1 20>,
             <&zip_xy_to_scroll_mapper>,                         //スクロールモードに変更
-            <&zip_scroll_snap>,                                 //スクロール方向スナップ
-            <&zip_scroll_transform INPUT_TRANSFORM_Y_INVERT>,   //スクロールのY軸反転
-            <&zip_scroll_scaler 1 20>;                           //スクロール量を1/12倍
+            //<&zip_scroll_snap>,                                 //スクロール方向スナップ
+            <&zip_scroll_transform INPUT_TRANSFORM_Y_INVERT>;
+            //<&zip_scroll_scaler 1 20>;                           //スクロール量を1/12倍
     };
 };
 &zip_temp_layer {
