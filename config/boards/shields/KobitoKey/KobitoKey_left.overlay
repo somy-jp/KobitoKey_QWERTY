@@ -4,6 +4,7 @@
 #include <input/processors/sensor_rotation.dtsi>
 #include <behaviors/input_gestures_accel.dtsi>
 #include <scroll-snap.dtsi>
+#include <input/processors/zmk-input-processor-keybind.dtsi>
 
 &xiao_serial { status = "disabled"; };
 
@@ -41,12 +42,9 @@
         irq-gpios = <&gpio0 2 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
         cpi = <750>; /* センサー感度 */
 
-
         evt-type = <INPUT_EV_REL>;
         x-input-code = <INPUT_REL_X>;
         y-input-code = <INPUT_REL_Y>;
-
-        /* force-awake削除: IDLE→ACTIVE遷移時のREST→RUN強制復帰ノイズによる意図しないスクロールを防止 */
     };
 };
 
@@ -73,7 +71,7 @@
     max-factor = <800>;
     speed-threshold = <700>;
     speed-max = <800>;
-    acceleration-exponent = <2>; /* 二次曲線で滑らかに遷移 */
+    acceleration-exponent = <2>;
 };
 
 &tb_left_listener {
@@ -86,9 +84,30 @@
             <&zip_scroll_snap>,
             <&zip_scroll_transform INPUT_TRANSFORM_Y_INVERT>,
             <&zip_scroll_scaler 1 20>;
+
+    volume {
+        layers = <4>;
+        input-processors =
+            <&zip_scroll_snap>,
+            <&zip_keybind_volume>;
+        process-next;
     };
 
+    prevent-move {
+        layers = <4>;
+        input-processors = <&zip_xy_scaler 0 1>;
+    };
+};
+
 / {
+  zip_keybind_volume: zip_keybind_volume {
+    compatible = "zmk,input-processor-keybind";
+    #input-processor-cells = <0>;
+    bindings = <&kp C_MUTE>, <&kp C_MUTE>, <&kp C_VOL_UP>, <&kp C_VOL_DN>;
+    mode = <1>;
+    tick = <200>;
+  };
+
   /omit-if-no-ref/ zip_temp_layer: zip_temp_layer {
     compatible = "zmk,input-processor-temp-layer";
     #input-processor-cells = <2>;
@@ -108,13 +127,22 @@
     scroller {
         layers = <5>;
         input-processors =
-            <&sensor_rotation_right>,
             <&zip_x_scaler 0 1>,
             <&zip_y_scaler 1 20>,
-            <&zip_xy_to_scroll_mapper>,                         //スクロールモードに変更
-            //<&zip_scroll_snap>,                                 //スクロール方向スナップ
+            <&zip_xy_to_scroll_mapper>,
             <&zip_scroll_transform INPUT_TRANSFORM_Y_INVERT>;
-            //<&zip_scroll_scaler 1 20>;                           //スクロール量を1/12倍
+    };
+
+    arrow {
+        layers = <1>;
+        input-processors =
+            <&zip_keybind_keys>;
+        process-next;
+    };
+
+    prevent-move {
+        layers = <1 5>;
+        input-processors = <&zip_xy_scaler 0 1>;
     };
 };
 &zip_temp_layer {
@@ -123,4 +151,11 @@
         7
         8
     >;
+};
+
+&zip_keybind_keys {
+    bindings = <&kp RIGHT>, <&kp LEFT>, <&kp UP>, <&kp DOWN>;
+    mode = <1>;         /* 4方向モード */
+    tick = <40>;         /* 感度（要チューニング） */
+    //tap-ms = <10>;       /* キー押下時間 */
 };
